@@ -1,0 +1,209 @@
+{
+  "skill_name": "eian-collage-broll",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "用 eian-collage-broll 帮我把这句做成拼贴 B-roll：很多人以为 AI 是来替你思考的，其实它更像一面镜子，会把你问题里的漏洞照出来。",
+      "expected_output": "At Gate 1, show only core meaning, one-sentence visual proposition, and the current item's page components, including primary visual groups and their components; then stop for approval. Determine emotion, visual roles, placement, breathing-zone direction, background, palette, component-level colors, and assembly order internally, and persist them only as confirmed state after approval. It must follow references/visual-language.md as the single source of truth for image appearance and must not generate an image or a video.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "当前 item 的 Gate 1 已确认隐喻是‘知识卡片通过轨道重新连成网络’，现在进入 Gate 2。背景保持温暖中性纸面，前景可使用彩色纸片。",
+      "expected_output": "At Gate 2, should create the item-level visual spec and imagegen prompt needed for the tail frame, generate and QA a numbered gate2-candidate-v1.png and show a numbered last-frame contact sheet, then stop for user approval. It must not create last-frame.png, a first frame, or a video at this stage; only explicit confirmation may promote the candidate to last-frame.png.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "当前批次每个 item 都已有属于对应当前 item、绑定当前 Gate 1 revision、通过 QA、已实际展示给用户、但尚未成为 last-frame.png 的 Gate 2 candidate；我现在明确确认这些 candidate，继续。",
+      "expected_output": "After Gate 2 approval, should promote each explicitly confirmed candidate to last-frame.png, automatically edit that confirmed last frame into an empty first frame, perform first-frame QA, write a complete item-specific video-prompt.txt, and deliver first-frame.png, last-frame.png and video-prompt.txt. It must not create another approval gate or invoke a video model.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "当前批次有 5 个正在 Gate 1 等待确认的 item；我确认 1、2、4 的隐喻，3 和 5 还要修改。先继续下一步。",
+      "expected_output": "Should advance only items 1, 2 and 4 to tail-frame generation while keeping items 3 and 5 at the metaphor revision gate. It must not generate a tail frame or asset package for unconfirmed items.",
+      "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "当前批次中 1、2、4 各有属于对应当前 item、绑定当前 Gate 1 revision、通过 QA、已实际展示给用户、尚未成为 last-frame.png 的 Gate 2 candidate，我现在明确确认它们；3 和 5 的 candidate 还要修改，继续。",
+      "expected_output": "Items 1, 2 and 4 are Gate 2-confirmed and should each automatically enter Phase 3, edit their confirmed last frame into a first frame, perform first-frame QA, write video-prompt.txt and complete their asset package without another approval gate or waiting for items 3 and 5. Items 3 and 5 must remain at Gate 2, with no first frame or asset package until their tail-frame revision and confirmation.",
+      "files": []
+    },
+    {
+      "id": 6,
+      "prompt": "用 eian-collage-broll 做这句：把旧经验翻出来，重新接上今天的工作。",
+      "expected_output": "Treat this as Type A only if it is naturally an approximately five-second, semantically complete unit with one main visual proposition; do not decide from word count, punctuation, or a single line alone. A valid Type A goes directly to Gate 1 without Candidate Extraction.",
+      "files": []
+    },
+    {
+      "id": 7,
+      "prompt": "这三段已经拆好：1. 旧工具还在转。\n2. 新流程把它们连起来。\n3. 团队开始一起校正。",
+      "expected_output": "Recognize the numbered, user-split segments as Type B. Preserve each original boundary that meets the independent-production-unit condition and route it directly to Gate 1. Only an original segment that does not meet that condition undergoes segment review; let the user decide whether its original text, all suggested segments, or selected suggested segments enter Gate 1. Do not merge, filter, or split on punctuation.",
+      "files": []
+    },
+    {
+      "id": 8,
+      "prompt": "这是完整定稿口播：一开始我们都在补旧洞。后来发现问题不在工具，而在经验没被组织起来。于是团队把分散的判断接进同一条流程，新的协作开始运转。",
+      "expected_output": "Treat this as Type C, perform Candidate Extraction using only continuous original excerpts, show only final numbered candidates, and wait for selection. Candidate Selection is not a visual approval Gate and must not design the formal visual metaphor before Gate 1.",
+      "files": []
+    },
+    {
+      "id": 9,
+      "prompt": "Gate 1 我确认：旧工具堆、连接轨道、协作人物与结果卡构成当前 item 的 visual groups；连接轨道是主要视觉角色，其余为辅助视觉角色。背景为暖中性色纸面，主色为黄色、少量焦橙点缀；右上保留明显 breathing zone；先轨道，再人物，最后让工具和结果卡接入。",
+      "expected_output": "Persist this Gate 1 confirmed state in <project>/brief.md under the current item's stable item identity, including the current visual groups, their confirmed visual roles, placement / composition direction, breathing-zone direction, background direction, primary / secondary color direction, and confirmed assembly order. Gate 2 visual spec and video prompt must inherit this current-item composition rather than redesign hierarchy, fill the breathing zone, or add groups. It must not treat this item's groups, visual roles, color choices, or breathing zone as a global fixed count, sole-core, semantic-color, or percentage rule.",
+      "files": []
+    },
+    {
+      "id": 10,
+      "prompt": "当前 item 的 Gate 1 confirmed state 是：旧工具堆（左下，辅助视觉角色，连向连接轨道）、连接轨道（中部，主要视觉角色，连接协作人物）、协作人物（右侧，辅助视觉角色）、判断卡（右下，辅助视觉角色）和结果标记（贴近轨道终点，辅助视觉角色）。左上保留明显 breathing zone。背景为暖中性色纸面，主色为黄色、少量焦橙点缀。按新视觉语言生成尾帧候选。",
+      "expected_output": "Create the item-level visual-spec.json and a Gate 2 candidate by inheriting the confirmed visual groups, visual roles, placement direction, breathing-zone direction, background direction, primary / secondary color direction, and relationships. The imagegen prompt must follow references/visual-language.md as the single source of truth for image appearance. It must not redesign hierarchy, fill empty paper, add groups, use a template placeholder, or require an internal-file dependency. Use gate2-candidate-v1.png plus a numbered contact sheet; do not treat the candidate as last-frame.png before explicit confirmation.",
+      "files": []
+    },
+    {
+      "id": 11,
+      "prompt": "不要给参考人物，做一个代表团队判断的拼贴人物。",
+      "expected_output": "Set subject.type to \"human\" and reference_subject_provided to false for this item input, so do not require resemblance to a real person. The subject must follow references/visual-language.md as the single source of truth for image appearance.",
+      "files": []
+    },
+    {
+      "id": 12,
+      "prompt": "当前 item 已有通过 QA、但尚未成为 last-frame.png 的 gate2-candidate-v1.png。这个 Gate 2 候选不错，但我还没有确认，先别继续。",
+      "expected_output": "Keep the QA-passed image as a versioned Gate 2 candidate for comparison and remain at Gate 2. Do not promote it to last-frame.png, create first-frame.png, write a Phase 3 deliverable, or invoke a video model.",
+      "files": []
+    },
+    {
+      "id": 13,
+      "prompt": "当前 item 已存在属于当前 item、绑定当前 Gate 1 revision、通过 QA、已实际展示给用户的 gate2-candidate-v2.png，且它还没有成为 last-frame.png。我现在明确确认 candidate v2，继续。",
+      "expected_output": "Only now promote or copy gate2-candidate-v2.png to last-frame.png, then independently enter Phase 3. Use the confirmed last frame as the edit source and preserve the Gate 1 confirmed assembly order in the execution artifacts.",
+      "files": []
+    },
+    {
+      "id": 14,
+      "prompt": "当前 item 已有 Gate 2 明确确认的 last-frame.png。请从该确认尾帧做默认空白首帧。",
+      "expected_output": "Remove every foreground component that will assemble later and every cast shadow those removed components created, reconstruct the occluded paper surface, and QA for ghost shadows, shadow silhouettes, or other removal artifacts. Keep the exact canvas and existing matte paper state rather than generating a new background.",
+      "files": []
+    },
+    {
+      "id": 15,
+      "prompt": "当前 item 已有 Gate 2 明确确认的 last-frame.png。首帧保留我明确指定的纸质底座，其他内容照常从空白开始组装。",
+      "expected_output": "Allow only the explicitly requested retained base structure and its own 方向统一、偏移明显、几乎没有柔化的强烈清晰硬投影 in Image 1. QA must confirm that its form, placement, scale, material, color / visual treatment, and that approved shadow have not visibly drifted; do not redraw, replace, move, scale, or redesign it. Remove every other later-assembling component and its shadow; do not introduce any other retained structure or treat the allowed base as a QA failure. The image appearance must follow references/visual-language.md as the single source of truth.",
+      "files": []
+    },
+    {
+      "id": 16,
+      "prompt": "当前 item 已有对应的 first-frame.png 和 Gate 2 明确确认的 last-frame.png。Gate 1 已确认组装顺序：先让黄色连接件插入，再让人物落位，最后让红色结果卡片弹出。请写视频提示词。",
+      "expected_output": "Combine the confirmed Gate 1 assembly order with each primary visual group's assembly_motion in motion_plan, then resolve the three concrete actions internally and write them directly as the video assembly sequence. The downstream video prompt must not require reading brief.md or visual-spec.json, and it must not expose fallback selection logic or any template placeholder.",
+      "files": []
+    },
+    {
+      "id": 17,
+      "prompt": "当前 item 已有对应的 first-frame.png 和 Gate 2 明确确认的 last-frame.png。请写视频生成提示词。",
+      "expected_output": "Open by exactly matching supplied Image 1 and preserving its matte paper surface, grain, texture, background state, and any explicitly allowed retained base. Prohibit fades, dissolves, and opacity-based appearance; every element must enter through an explicit slide-in, snap, physical placement, connection, or mechanical stop-motion action. Do not invoke a video model.",
+      "files": []
+    },
+    {
+      "id": 18,
+      "prompt": "当前批量中 1 和 3 各有属于对应当前 item、绑定当前 Gate 1 revision、通过 QA、已实际展示给用户、尚未成为 last-frame.png 的 Gate 2 candidate，我现在明确确认它们；2 的 candidate 还要改，继续。",
+      "expected_output": "Promote only items 1 and 3's explicitly confirmed candidates to their own last-frame.png files and independently run Phase 3 for them. Item 2 remains a Gate 2 candidate/revision item with no last-frame promotion, first frame, or asset package until confirmation.",
+      "files": []
+    },
+    {
+      "id": 19,
+      "prompt": "当前 item 已有 Gate 1 confirmed state，且未提供主体参考图。现在进入 Gate 2，请写入 <item>/visual-spec.json。",
+      "expected_output": "Write a fully materialized, standard-JSON-parseable <item>/visual-spec.json. reference_subject_provided must be the JSON boolean literal false, not the string \"false\" and not {{reference_subject_provided}}; no template placeholder may remain in the actual JSON.",
+      "files": []
+    },
+    {
+      "id": 20,
+      "prompt": "批量项目恢复：item A 的 confirmed state 是‘黄色轨道连接两张工具卡’，点色芥末黄；item B 的 confirmed state 是‘两个人物围绕深紫判断卡协作’，点色深紫，且 item B 有对应 reference subject source。现在只恢复 item B 的 Gate 2。",
+      "expected_output": "Treat item B as the current item with its own stable item identity and <item>/ directory. Read only item B's confirmed state when creating its visual spec and production plan: do not reuse item A's script, groups, colors, assembly order, subject.type, reference_subject_provided value, or reference-subject association. Persisted per-item state must include source script, core meaning, emotion, confirmed visual proposition / visual metaphor, primary visual groups, background direction, confirmed Approved Palette, confirmed component-level color assignment, assembly order, subject.type, reference_subject_provided, and the current item's reference-subject source / association when present.",
+      "files": []
+    },
+    {
+      "id": 21,
+      "prompt": "当前 item 的 Gate 1 confirmed state / <item>/visual-spec.json 要求：subject.type 为 human；暖中性色纸面底板带轻微纸纤维与旧纸颗粒感；左下旧工具卡片组连接中部轨道组，轨道再连接右侧协作人物组；人物是整体压暗的黑白照片剪贴，有不规则手工撕剪边，呈现照片蒙太奇、剪纸叠层与网点印刷特征，并且所有可见手、脚、头部、躯干和四肢连续连接；非人物组件是统一黄色主色、少量焦橙点缀的彩色卡纸浮雕；全部前景有方向统一、偏移明显、几乎没有柔化的强烈清晰硬投影；右上保留明显 breathing zone，最终关系是工具通过轨道接入协作。现有 Gate 2 candidate 却把人物画成高亮灰阶且头、手、腿都是分离纸片，非人物组件为光滑 3D，投影柔和模糊，元素平均铺满画布、每个角落都有小组件、没有足够负空间，并且输出不是 9:16。请执行尾帧 QA。",
+      "expected_output": "Fail Gate 2 confirmed-state fidelity QA. QA must compare the candidate with the current item's confirmed visual groups, visual roles, necessary components, key relationships, placement / composition direction, breathing-zone direction, background direction, primary / secondary color direction, and confirmed visual proposition / visual metaphor while allowing natural non-pixel-level realization. It must fail the candidate because it violates the confirmed visual authority: 人物采用整体压暗的黑白照片剪贴风格，具有不规则手工撕剪边缘，呈现照片蒙太奇、剪纸叠层与网点印刷特征; 人物在单张静帧中必须作为一张连续、一体化的照片剪贴形体存在; 不得出现肢体断开、悬空、错误连接或分体纸偶式拼装; 不得退化为写实材质、光滑 3D 或统一绘画元素; 不得使用柔和、扩散或仅作为轻微接触阴影的处理; 不得平均分配视觉重量; 画面应保留足够负空间，避免组件过度堆叠或信息密度过高。It must also fail the 9:16 violation. The candidate must not be promoted to last-frame.png until the visual-authority and confirmed-state failures are corrected and the user explicitly confirms a passing candidate.",
+      "files": []
+    },
+    {
+      "id": 22,
+      "prompt": "当前 item 已有 Gate 1 confirmed state，subject.type 为 nonhuman，并已关联当前 item 使用的清晰动物面部 reference-subject source。现在进入 Gate 2，请写入 <item>/visual-spec.json。",
+      "expected_output": "Write a fully materialized, standard-JSON-parseable <item>/visual-spec.json with subject.type set to \"nonhuman\". reference_subject_provided must be the JSON boolean literal true, not the string \"true\" and not {{reference_subject_provided}}; no template placeholder may remain in the actual JSON. Use only the current item's reference-subject association, preserve its recognizable nonhuman traits, and apply its natural body continuity rather than human anatomy.",
+      "files": []
+    },
+    {
+      "id": 23,
+      "prompt": "当前项目有两个 active items。item A 已完成 Phase 3，且有 first-frame.png、last-frame.png、video-prompt.txt 和 gate2-candidate-v1.png；item B 仍在 Gate 2，尚未完成 Phase 3。请完成当前步骤。",
+      "expected_output": "Deliver item A's already-complete Phase 3 package as applicable, but do not run Project Cleanup because item B is still an active, incomplete item. Preserve item A's gate2-candidate-v1.png and every other intermediate file; do not delete anything and do not add an approval Gate.",
+      "files": []
+    },
+    {
+      "id": 24,
+      "prompt": "当前项目的全部两个 active items 都已明确完成 Phase 3。每个 item 都有可读取的有效 9:16 first-frame.png、last-frame.png 和非空 video-prompt.txt。两个 item 分别还含 gate2-candidate-v1.png、visual-spec.json、临时 imagegen prompt 和 item-level QA note；项目根目录含 last-frame-contact-sheet-v2.jpg、gate2-qa.md、imagegen-prompts.md 与长期持久化的 brief.md。请完成项目。",
+      "expected_output": "Automatically enter Project Cleanup as the final workflow step without a new user approval Gate. After validating the Phase 3 state and all three formal deliverables for every active item before any deletion, delete the listed confirmed Skill-generated intermediates but retain the persistent brief.md. Each cleaned active item directory must contain only first-frame.png, last-frame.png and video-prompt.txt.",
+      "files": []
+    },
+    {
+      "id": 25,
+      "prompt": "当前项目所有 active items 都声称完成 Phase 3。item A 有 first-frame.png、last-frame.png、video-prompt.txt 和 gate2-candidate-v1.png；item B 有 first-frame.png、last-frame.png 和 gate2-candidate-v1.png，但 video-prompt.txt 缺失。请完成项目。",
+      "expected_output": "Do not run Project Cleanup because item B is missing a required formal deliverable. Before any deletion, report the missing video-prompt.txt and preserve every intermediate file for every item, including both gate2-candidate-v1.png files; do not perform a partial cleanup or add an approval Gate.",
+      "files": []
+    },
+    {
+      "id": 26,
+      "prompt": "当前项目所有 active items 都已明确完成 Phase 3，且每个 item 的 first-frame.png、last-frame.png 和 video-prompt.txt 都有效。项目还包含用户上传的 uploads/user-reference.jpg、用户提供的 external-reference.png、长期持久化资产 assets/approved-brand-library.png，以及无法确认归属的 notes/keep-origins-unknown.md；这些都位于项目根目录，不在 active item 目录内。请完成项目。",
+      "expected_output": "Run the final Project Cleanup only for positively identified current-project Skill-generated intermediates. Never delete the user-uploaded original, user-provided external reference image, persistent asset, or ownership-unknown note; do not delete files outside the current project or follow symlinks. The protected root-level files remain while each cleaned active item directory contains only first-frame.png, last-frame.png and video-prompt.txt; do not add an approval Gate.",
+      "files": []
+    },
+    {
+      "id": 27,
+      "prompt": "当前 item 的 Gate 1 已在 revision 1 确认，gate2-candidate-v2.png 已通过 QA、展示给用户并绑定该 revision，且该 candidate 已完成 Phase 3 素材包。现在我实际修改了 Gate 1 视觉方案并再次确认，形成 revision 2；随后我说‘就用旧的 candidate v2’。",
+      "expected_output": "Increase gate1_revision to 2 for the actual reconfirmed Gate 1 change. The revision-1 candidate may remain only for comparison and must not be promoted to last-frame.png or enter Phase 3; create, QA, present, and explicitly confirm a candidate bound to the current item's revision 2 before promotion. If the old revision had completed Phase 3, its old confirmed_candidate_version no longer represents a valid confirmed candidate for the current revision, phase3_status must no longer remain completed, and the old completed state no longer represents completion for the current revision; complete the new revision's Gate 2 confirmation and Phase 3 before treating the item as completed again.",
+      "files": []
+    },
+    {
+      "id": 28,
+      "prompt": "批量 Gate 2 中，item A 和 item B 都有多个通过 QA 且已展示的 candidate；item A 还有两个不同 Gate 1 revision 的 candidate。我只回复‘上一张可以’。",
+      "expected_output": "Do not guess or promote any candidate. Remain at Gate 2 until the confirmation uniquely identifies the current stable item identity, candidate version, and current Gate 1 revision. A promotable candidate must be bound to that item, version, and revision, have been presented, and be explicitly confirmed.",
+      "files": []
+    },
+    {
+      "id": 29,
+      "prompt": "当前 item 的 confirmed candidate 已成为 last-frame.png，first-frame.png 已通过 QA，video-prompt.txt 已完成，phase3_status 为 completed。我再次确认同一个 candidate，但没有要求修改或重新生成。",
+      "expected_output": "Treat the repeat confirmation as idempotent: do not rerun Phase 3 or regenerate any of the three deliverables. Re-enter a stage only if the user explicitly requests a modification or regeneration for this current item.",
+      "files": []
+    },
+    {
+      "id": 30,
+      "prompt": "当前 item 的 subject.type 为 human，reference_subject_provided 为 true，reference_subject_source 指向该 item 实际关联的 Skill-managed reference。现在生成 Gate 2 candidate。",
+      "expected_output": "Use the fully materialized imagegen prompt and pass that current item's actual managed human reference image as a real image input to image_gen. Do not rely only on a textual identity instruction, ask a downstream model to read brief.md or visual-spec.json, or use another item's reference.",
+      "files": []
+    },
+    {
+      "id": 31,
+      "prompt": "当前 item 的 subject.type 为 nonhuman，reference_subject_provided 为 true，reference_subject_source 指向该 item 实际关联的 Skill-managed animal reference。现在生成 Gate 2 candidate。",
+      "expected_output": "Use the fully materialized imagegen prompt and pass that current item's actual managed nonhuman reference image as a real image input to image_gen. QA must compare the candidate with that same reference for recognizable subject or species traits and natural continuity; do not use another item's reference.",
+      "files": []
+    },
+    {
+      "id": 32,
+      "prompt": "用户上传的原始 reference 已被 Skill 复制为当前 item 关联的 managed reference。用户现在明确要求 replace，随后又明确要求 delete 当前 reference。",
+      "expected_output": "On replace or delete, remove only the Skill-managed persistent copy and its association when applicable. After delete, set reference_subject_provided to false and clear the current reference source and association. Never delete the user's original uploaded reference; Project Cleanup must not trigger either replace or delete behavior.",
+      "files": []
+    },
+    {
+      "id": 33,
+      "prompt": "当前项目的 brief.md 标明 item A 的 phase3_status 为 completed，item B 的 phase3_status 仍未完成。即使 item B 目录恰好已有三项交付文件，请完成项目。",
+      "expected_output": "Do not run Project Cleanup or delete anything. Verify active items and Phase 3 completion from <project>/brief.md first; cleanup requires both valid canonical state and valid file-level preflight for every active item, and any preflight failure causes zero deletion.",
+      "files": []
+    },
+    {
+      "id": 34,
+      "prompt": "当前项目所有 active items 都在 brief.md 中完成 Phase 3 且三项正式交付有效。项目还包含 <project>/brief.md、当前有效的 Skill-managed persistent reference 和用户原始上传 reference，以及可确认的 Skill-generated Gate 2 中间文件。请完成项目。",
+      "expected_output": "After full state and deliverable preflight, delete only the confirmed Skill-generated intermediates. Always retain <project>/brief.md, the current effective Skill-managed persistent reference, and the user's original uploaded reference; cleanup must never delete or replace references.",
+      "files": []
+    }
+  ]
+}
