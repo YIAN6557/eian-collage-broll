@@ -51,13 +51,13 @@
     },
     {
       "id": 9,
-      "prompt": "Gate 1 我确认：旧工具堆、连接轨道、协作人物与结果卡构成当前 item 的 visual groups；连接轨道是主要视觉角色，其余为辅助视觉角色。背景为暖中性色纸面，主色为黄色、少量焦橙点缀；右上保留明显 breathing zone；先轨道，再人物，最后让工具和结果卡接入。",
+      "prompt": "Gate 1 我确认：旧工具堆、连接轨道、协作人物与结果卡构成当前 item 的 visual groups；连接轨道是主要视觉角色，其余为辅助视觉角色。背景为暖中性色纸面，Approved Palette 为 Ember（暖柿橙 #F57C28、暖姜黄 #F4C430、墨湖绿 #008972）；所有非主体 component 的主色为暖姜黄 #F4C430，点缀 component 为少量暖柿橙 #F57C28；右上保留明显 breathing zone；先轨道，再人物，最后让工具和结果卡接入。",
       "expected_output": "Persist this Gate 1 confirmed state in <project>/brief.md under the current item's stable item identity, including the current visual groups, their confirmed visual roles, placement / composition direction, breathing-zone direction, background direction, primary / secondary color direction, and confirmed assembly order. Gate 2 visual spec and video prompt must inherit this current-item composition rather than redesign hierarchy, fill the breathing zone, or add groups. It must not treat this item's groups, visual roles, color choices, or breathing zone as a global fixed count, sole-core, semantic-color, or percentage rule.",
       "files": []
     },
     {
       "id": 10,
-      "prompt": "当前 item 的 Gate 1 confirmed state 是：旧工具堆（左下，辅助视觉角色，连向连接轨道）、连接轨道（中部，主要视觉角色，连接协作人物）、协作人物（右侧，辅助视觉角色）、判断卡（右下，辅助视觉角色）和结果标记（贴近轨道终点，辅助视觉角色）。左上保留明显 breathing zone。背景为暖中性色纸面，主色为黄色、少量焦橙点缀。按新视觉语言生成尾帧候选。",
+      "prompt": "当前 item 的 Gate 1 confirmed state 是：旧工具堆（左下，辅助视觉角色，连向连接轨道）、连接轨道（中部，主要视觉角色，连接协作人物）、协作人物（右侧，辅助视觉角色）、判断卡（右下，辅助视觉角色）和结果标记（贴近轨道终点，辅助视觉角色）。左上保留明显 breathing zone。背景为暖中性色纸面，Approved Palette 为 Ember（暖柿橙 #F57C28、暖姜黄 #F4C430、墨湖绿 #008972）；所有非主体 component 的主色为暖姜黄 #F4C430，点缀 component 为少量暖柿橙 #F57C28。按新视觉语言生成尾帧候选。",
       "expected_output": "Create the item-level visual-spec.json and a Gate 2 candidate by inheriting the confirmed visual groups, visual roles, placement direction, breathing-zone direction, background direction, primary / secondary color direction, and relationships. The imagegen prompt must follow references/visual-language.md as the single source of truth for image appearance. It must not redesign hierarchy, fill empty paper, add groups, use a template placeholder, or require an internal-file dependency. Use gate2-candidate-v1.png plus a numbered contact sheet; do not treat the candidate as last-frame.png before explicit confirmation.",
       "files": []
     },
@@ -117,13 +117,13 @@
     },
     {
       "id": 20,
-      "prompt": "批量项目恢复：item A 的 confirmed state 是‘黄色轨道连接两张工具卡’，点色芥末黄；item B 的 confirmed state 是‘两个人物围绕深紫判断卡协作’，点色深紫，且 item B 有对应 reference subject source。现在只恢复 item B 的 Gate 2。",
+      "prompt": "批量项目恢复：item A 的 confirmed state 是‘黄色轨道连接两张工具卡’，Approved Palette 为 Vivid（#F5C51B、#00A6C7、#E84A3C），轨道和工具卡均为金黄色 #F5C51B；item B 的 confirmed state 是‘两个人物围绕深紫判断卡协作’，Approved Palette 为 Groove（#6D46F3、#00B8A9、#FF9955），判断卡为深紫 #6D46F3，且 item B 有对应 reference subject source。现在只恢复 item B 的 Gate 2。",
       "expected_output": "Treat item B as the current item with its own stable item identity and <item>/ directory. Read only item B's confirmed state when creating its visual spec and production plan: do not reuse item A's script, groups, colors, assembly order, subject.type, reference_subject_provided value, or reference-subject association. Persisted per-item state must include source script, core meaning, emotion, confirmed visual proposition / visual metaphor, primary visual groups, background direction, confirmed Approved Palette, confirmed component-level color assignment, assembly order, subject.type, reference_subject_provided, and the current item's reference-subject source / association when present.",
       "files": []
     },
     {
       "id": 21,
-      "prompt": "当前 item 的 Gate 1 confirmed state / <item>/visual-spec.json 要求：subject.type 为 human；暖中性色纸面底板带轻微纸纤维与旧纸颗粒感；左下旧工具卡片组连接中部轨道组，轨道再连接右侧协作人物组；人物是整体压暗的黑白照片剪贴，有不规则手工撕剪边，呈现照片蒙太奇、剪纸叠层与网点印刷特征，并且所有可见手、脚、头部、躯干和四肢连续连接；非人物组件是统一黄色主色、少量焦橙点缀的彩色卡纸浮雕；全部前景有方向统一、偏移明显、几乎没有柔化的强烈清晰硬投影；右上保留明显 breathing zone，最终关系是工具通过轨道接入协作。现有 Gate 2 candidate 却把人物画成高亮灰阶且头、手、腿都是分离纸片，非人物组件为光滑 3D，投影柔和模糊，元素平均铺满画布、每个角落都有小组件、没有足够负空间，并且输出不是 9:16。请执行尾帧 QA。",
+      "prompt": "当前 item 的 Gate 1 confirmed state / <item>/visual-spec.json 要求：subject.type 为 human；暖中性色纸面底板带轻微纸纤维与旧纸颗粒感；左下旧工具卡片组连接中部轨道组，轨道再连接右侧协作人物组；人物是整体压暗的黑白照片剪贴，有不规则手工撕剪边，呈现照片蒙太奇、剪纸叠层与网点印刷特征，并且所有可见手、脚、头部、躯干和四肢连续连接；非人物组件是彩色卡纸浮雕，Approved Palette 为 Ember（#F57C28、#F4C430、#008972），工具卡片和轨道主色均为暖姜黄 #F4C430，点缀组件为少量暖柿橙 #F57C28；全部前景有方向统一、偏移明显、几乎没有柔化的强烈清晰硬投影；右上保留明显 breathing zone，最终关系是工具通过轨道接入协作。现有 Gate 2 candidate 却把人物画成高亮灰阶且头、手、腿都是分离纸片，非人物组件为光滑 3D，投影柔和模糊，元素平均铺满画布、每个角落都有小组件、没有足够负空间，并且输出不是 9:16。请执行尾帧 QA。",
       "expected_output": "Fail Gate 2 confirmed-state fidelity QA. QA must compare the candidate with the current item's confirmed visual groups, visual roles, necessary components, key relationships, placement / composition direction, breathing-zone direction, background direction, primary / secondary color direction, and confirmed visual proposition / visual metaphor while allowing natural non-pixel-level realization. It must fail the candidate because it violates the confirmed visual authority: 人物采用整体压暗的黑白照片剪贴风格，具有不规则手工撕剪边缘，呈现照片蒙太奇、剪纸叠层与网点印刷特征; 人物在单张静帧中必须作为一张连续、一体化的照片剪贴形体存在; 不得出现肢体断开、悬空、错误连接或分体纸偶式拼装; 不得退化为写实材质、光滑 3D 或统一绘画元素; 不得使用柔和、扩散或仅作为轻微接触阴影的处理; 不得平均分配视觉重量; 画面应保留足够负空间，避免组件过度堆叠或信息密度过高。It must also fail the 9:16 violation. The candidate must not be promoted to last-frame.png until the visual-authority and confirmed-state failures are corrected and the user explicitly confirms a passing candidate.",
       "files": []
     },
@@ -189,8 +189,8 @@
     },
     {
       "id": 32,
-      "prompt": "用户上传的原始 reference 已被 Skill 复制为当前 item 关联的 managed reference。用户现在明确要求 replace，随后又明确要求 delete 当前 reference。",
-      "expected_output": "On replace or delete, remove only the Skill-managed persistent copy and its association when applicable. After delete, set reference_subject_provided to false and clear the current reference source and association. Never delete the user's original uploaded reference; Project Cleanup must not trigger either replace or delete behavior.",
+      "prompt": "用户首次上传并通过检查一张 human reference H；同批三个 item 的 Gate 1 视觉方案分别独立确定为 A=human、B=none、C=human。A 已进入 Gate 2；该批完成后，用户重新提交新文稿，Gate 1 独立确定 item D=human，随后进入 Gate 2。之后用户上传并通过检查一张 nonhuman dog reference N，明确 replace 当前默认 reference；同批 item E 的 Gate 1 独立确定为 nonhuman 并进入 Gate 2，item F 的 Gate 1 独立确定为 human；用户在 E 仍为当前 item 时明确 delete 当前默认 reference。",
+      "expected_output": "H must become the Skill-level current default persistent reference outside every project and item, while the user original remains untouched. Gate 1 must determine A/B/C/D/E/F subject.type from each current script and visual scheme before considering H or N. H automatically creates only A and C's matching current-item associations; B must have reference_subject_provided false with empty source / association, no reference input, and no face-bearing subject. Gate 2 for A and later D must pass that current item's actual H association as the real image_gen input, never another item's association or the default directly. D proves the matching persistent default continues across a completed batch and a later Skill invocation. After N passes inspection, it becomes the current default and automatically creates E's matching current-item association; F is type-mismatched and must keep reference_subject_provided false with empty source / association. Gate 2 for E must pass E's actual N association as the real image_gen input. Replace must not change A/C/D's existing associations, and may delete H's managed copy only once no association uses it. Delete clears the current default and E's association/source, sets E's reference_subject_provided false, and may delete N's managed copy only once no association uses it; it never deletes any user original. Project Cleanup never replaces or deletes references.",
       "files": []
     },
     {

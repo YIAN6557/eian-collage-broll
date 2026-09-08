@@ -1,6 +1,6 @@
 # Image Production
 
-此模块集中图片生产、Prompt 与验收。输入路由、Gate、阶段顺序、工具调用、项目目录与最终交付见 [SKILL.md](../SKILL.md)。图片视觉规范以 [visual-language.md](visual-language.md) 为唯一职责源；本文件中为实际生产、Prompt 与 QA 保留的视觉内容是 implementation mirror，如与其冲突则以 `visual-language.md` 为准。本文件不重新定义 Gate 状态机；Gate 状态以 `SKILL.md` 为准。
+此模块集中图片生产、Prompt 与验收。输入路由、Gate、阶段顺序、项目目录与最终交付见 [SKILL.md](../SKILL.md)。图片视觉规范以 [visual-language.md](visual-language.md) 为唯一职责源；本文件中为实际生产、Prompt 与 QA 保留的视觉内容是 implementation mirror，如与其冲突则以 `visual-language.md` 为准。本文件不重新定义 Gate 状态机；Gate 状态以 `SKILL.md` 为准。
 
 ## Phase 2：生成并确认尾帧
 
@@ -66,19 +66,17 @@
     "visual_hierarchy": "画面必须建立明确的主次层级，确保视觉重点清晰。主要主体（如有）、核心组件与辅助组件之间应通过尺度、位置、叠层和留白形成明确层级，不得平均分配视觉重量。辅助元素不得抢夺主要视觉重点。"
   },
   "motion_plan": "{{resolved_item_level_production_plan}}",
-  "avoid": "readable text, letters, numbers, subtitles, logos, watermark, UI, photoreal material, glossy 3D, unified painting space, unified 3D space"
+  "avoid": "readable text, letters, numbers, subtitles, logos, watermark, UI, photoreal non-character components or environments, glossy 3D, unified painting space, unified 3D space"
 }
 ```
 
 `<item>/visual-spec.json` 必须从 `<project>/brief.md` 中与当前 item stable item identity 对应的 state 读取 Gate 1 confirmed state。`subject.type` 必须为 `none`、`human` 或 `nonhuman`；`none` 时 `subject.style` 与 `subject.identity_and_continuity` 为空，且实际 Prompt 不写入主体要求，其余类型必须分别完全物化当前 item 的对应主体风格、身份和连续性要求。`reference_subject_source` 在 `none` 或没有 reference 的 `human` / `nonhuman` 时必须为空且 `reference_subject_provided` 为 `false`；有 reference 时必须为 `true`，并指向当前 item 实际关联的 managed reference，不允许 placeholder。`primary_visual_groups[].role` 保存当前 item 已确认的主次 / visual role；`component_colors` 以 `components` 中每个非主体 component 的名称为 key、其已确认的 Approved Palette HEX 值为 value；主体不写入该对象。`composition.layout`、`composition.negative_space` 与 `composition.visual_hierarchy` 保存当前 item 已确认的构图方向、负空间 / breathing zone direction 与层级关系。Gate 1 `assembly order` 是用户确认的 item-level narrative assembly order；`primary_visual_groups[].assembly_motion` 是单个 visual group 内 components 的具体进入、连接或放置动作；`motion_plan` 将 confirmed Gate 1 assembly order 与 group-level assembly motion 组合为 item-level production plan；`resolved assembly sequence` 是最终完全物化后直接写入 `video-prompt.txt` 的具体动作序列。后一级必须继承前一级，不得重新设计已确认的 assembly order。Gate 2 必须继承这些 confirmed values，不得重新设计已确认的主次关系、填掉留白或主动增加 groups。只有 Gate 1 没有提供更具体顺序时，才使用“基础结构 → 主体或关键卡片 → 连接件 → 动作 → 最终结果”作为 fallback。
 
-`primary_visual_groups` 必须完整继承 Gate 1 已确认的组。Gate 1 默认 3–6 个、优先 3–4 个；这里不得为了凑模板数量自行增删。
+`primary_visual_groups` 必须完整继承 Gate 1 已确认的组；组数与 components 归属由 [SKILL.md 的 Gate 1](../SKILL.md#gate-1隐喻确认) 定义，这里不得为了凑模板数量自行增删。
 
 ### 色彩规则
 
-背景使用暖中性色纸面作为统一底板，带轻微纸纤维与旧纸颗粒感。
-
-每张图片的非主体组件从 [visual-language.md](visual-language.md) 定义的 Approved Palettes 中选择 1 组三色配色，并继承当前 item 已确认的具体 component-level 用色。每个 primary visual group 内只允许使用该 palette 中的 1–2 种非主体组件颜色，其中第 2 种颜色只能作为少量点缀；不同 visual groups 可以重复使用同一颜色，不得新增当前 palette 之外的颜色。
+从当前 item 的 confirmed state 继承背景、Approved Palette 与 component-level 用色；颜色的适用范围、组内主色 / 点缀色限制与跨组复用统一见 [visual-language.md §1、§3](visual-language.md)。
 
 ### 代表性 Gate 2 尾帧 Prompt 模板
 
@@ -112,51 +110,21 @@ Avoid: no readable text, no letters, no numbers, no subtitles, no logos, no wate
 
 ### 尾帧 QA
 
-- visual metaphor 是否一眼可理解
-- 构图是否服务视觉命题，不强制居中
-- 是否采用暖中性色纸面作为统一底板，并带轻微纸纤维与旧纸颗粒感
-- visual groups、组内细节与当前 item 已确认的主次 / visual role 是否具有明确归属和层级
-- 是否对照当前 item 的 Gate 1 confirmed state / `<item>/visual-spec.json`，完整保留 confirmed visual groups 及必要 components
-- confirmed 关键 relationships 是否成立
-- placement / composition direction 是否没有发生影响原视觉命题的语义性偏移；不要求物件位于精确像素坐标
-- confirmed background direction 与主色 / 辅助色方向是否得到继承
-- 最终完成关系是否符合 confirmed visual proposition / visual metaphor
-- 输出是否保持 9:16
-- `reference_subject_provided` 为 `true` 时，是否实际对照当前 item 的 `reference_subject_source` 指向的 managed reference image，且该 reference 确实属于当前 item
-- 有 reference 的 `human` 是否仍可识别其身份核心特征
-- 有 reference 的 `nonhuman` 是否仍可识别其主体或物种关键特征
-- 黑白化、halftone、裁切和比例变化是否造成有 reference 主体的明显身份漂移
-- `subject.type` 是否为 `none`、`human` 或 `nonhuman`，并与当前 item 的 confirmed state 一致
-- `subject.type` 为 `none` 时，是否没有自行新增具面部主体
-- `subject.type` 为 `human` 时，主体是否采用整体压暗的黑白照片剪贴风格，身份可识别且没有漂移，并保持连续一体化形体；可见手必须连接手臂、脚必须连接腿，且不得出现肢体断开、悬空、错误连接或分体纸偶式拼装
-- `subject.type` 为 `nonhuman` 时，主体是否采用整体压暗的黑白照片剪贴风格，保留可辨认的物种或主体特征，且可见部位按该主体自身的自然连接关系连续，不套用人类解剖
-- 当前图片是否完整继承当前 item 已确认的 Approved Palette，且没有新增 palette 之外的颜色
-- 每个非主体 component 是否具有明确、稳定并与 visual spec 一致的卡纸颜色
-- 同一个 primary visual group 内的非主体 components 是否只使用 1–2 种颜色
-- 使用第 2 种颜色时，是否仅作为少量点缀，没有大面积使用或与该组主色平均分配视觉重量
-- visual groups 超过 3 个时，是否通过复用当前 palette 的已有颜色完成配色，而没有新增颜色
-- 具面部主体是否保持整体压暗的黑白照片剪贴语言，不计入非主体组件的颜色数量限制
-- 非主体组件是否保持纯粹明确的色块、清晰裁切边缘、纸张厚度和实体卡纸质感
-- 非主体组件是否避免写实材质、光滑 3D 与统一绘画元素，并与黑白照片剪贴主体（如有）保持色彩、明度与材质反差
-- 所有前景元素是否在底板纸面上留下方向统一、偏移明显、几乎没有柔化的强烈清晰硬投影，表现出被垫高、悬起或叠放在纸面上的浮雕效果
-- 是否采用平面拼贴式空间组织，不受真实透视与真实尺度约束；主体（如有）与组件的放大、缩小、错位和组合关系是否服务视觉层级、图形关系与文案隐喻关系
-- 是否呈现“剪贴主体（如有）+ 卡纸场景”的分层拼贴，而非统一绘画空间或统一 3D 空间
-- 是否建立清晰主次，避免平均分配视觉重量和辅助元素抢夺主要视觉重点
-- 所有前景组件，包括主体（如有）与非主体 visual groups，连同其形成的投影视觉占用区域，是否整体不超过纸面约 60%
-- 是否至少约 40% 的纸面保持可见
-- 是否有任何可读文字、字母、数字、字幕、logo、水印或 UI
-- 是否出现写实材质、光滑 3D、统一绘画空间或统一 3D 空间
-- 同一批是否统一设计语言
+对照当前 item 的 Gate 1 confirmed state、`<item>/visual-spec.json` 与实际输出逐项检查：
 
-以下情况 FAIL：输出不是 9:16，或出现任何可读文字、字母、数字、字幕、logo、水印或 UI；`reference_subject_provided = true` 时未实际对照当前 item 的 managed reference image、reference 不属于当前 item，或人类身份核心特征、非人主体 / 物种关键特征因黑白化、halftone、裁切或比例变化而明显漂移；`subject.type` 与 confirmed state 不一致，`none` 时自行新增具面部主体，`human` 时主体不是整体压暗的黑白照片剪贴、出现身份漂移、分体纸偶式拼装、肢体断开、悬空或错误连接，或 `nonhuman` 时主体不可辨认、未保持黑白照片剪贴或违反自身自然连接关系；非主体组件没有继承当前 Approved Palette、出现 palette 外颜色、同一 visual group 使用超过 2 种非主体组件颜色，或第 2 色被大面积使用；非主体组件退化为写实材质、光滑 3D 或统一绘画元素；前景没有方向统一、偏移明显、几乎没有柔化的强烈清晰硬投影；画面没有呈现“剪贴主体（如有）+ 卡纸场景”的分层拼贴，或收敛为统一绘画空间 / 统一 3D 空间；视觉重量平均分配、辅助元素抢夺重点；所有前景组件连同其投影视觉占用区域明显超过纸面约 60%，或可见纸面明显不足约 40%。FAIL candidate 不得进入 `last-frame.png`。Gate 2 只负责实现 Gate 1 confirmed composition，不负责重新设计已确认的主次关系、填掉留白或主动增加 groups。
+- 视觉命题与完成态关系是否一眼可理解，构图是否服务命题，不强制居中。
+- confirmed visual groups、必要 components、各组主次 / visual role、关键 relationships 是否完整且有明确归属。
+- placement / composition、breathing zone、背景及主色 / 辅助色方向是否继承；允许自然实现差异，不要求精确像素坐标，不得重新设计主次、填掉留白或主动增加 groups。
+- 输出是否为 9:16，`subject.type` 是否与当前 confirmed state 一致。
+- `reference_subject_provided = true` 时，是否实际对照当前 item 关联的 managed reference；人类身份核心特征、非人主体或物种关键特征是否保留，黑白化、halftone、裁切与比例变化是否导致明显身份漂移。
+- 按 [visual-language.md](visual-language.md) 的全部视觉条款检查：§1 纸面；§2 主体风格、身份与自然形体连续性及 `none` 分支；§3 非主体组件材质、Approved Palette、逐组件颜色、组内主色 / 点缀色与跨组复用；§4 硬投影；§5 平面拼贴空间；§6 层级与前景连同投影约 60% / 可见纸面至少约 40%；Content Restrictions。三色与非写实材质限制适用于非主体组件，不把黑白照片主体或暖中性背景误纳入三色限制。
+- 非主体 component 的实体卡纸颜色是否与当前 item 已确认的 visual spec 一致；同批是否统一设计语言。
 
-将通过 QA 的尾帧先保存为 `<item>/gate2-candidate-v1.png`；重生成时使用递增版本。当前待确认 candidate 必须在当前 item state 中绑定 `item_id + candidate_version + gate1_revision`；生成后同步更新 `latest_candidate_version` 与 `candidate_gate1_revision`。生成带编号的 `last-frame-contact-sheet.jpg`，展示给用户并停下等待 Gate 2 确认；每张图标签至少明确 `item identity + candidate version`，不得只显示无法稳定追踪的 `1 / 2 / 3`。只有已经实际展示给用户的版本才能写入 `presented_candidate_version`。只有属于当前 item、当前 Gate 1 revision、已展示且被用户明确确认的 candidate 才能写入 `confirmed_candidate_version` 并复制或重命名为 `<item>/last-frame.png`。尾帧 QA 结论写入 `<project>/gate2-qa.md`。
-
-如果用户要求重新生成部分尾帧，重生后生成 `last-frame-contact-sheet-v2.jpg`（后续轮次递增 v3、v4…），保留旧版 contact sheet 不覆盖，方便对比。
+上述 confirmed-state 或视觉规范检查失败即为 FAIL；FAIL candidate 不得成为 `last-frame.png`。QA 结论写入 `<project>/gate2-qa.md`。通过 QA 后，按 [SKILL.md 的 Gate 2](../SKILL.md#gate-2尾帧生成与确认) 执行 candidate 版本保存、provenance 绑定、contact sheet 编号与展示、用户确认和正式尾帧晋升；该入口统一定义版本与状态字段，不在本模块重复维护。
 
 ## Phase 3：生成素材包
 
-此阶段不是审批 Gate。某个 item 的尾帧一经 Gate 2 确认定稿，就自动为该 item 默认生成空白首帧；如果用户明确要求首帧保留一个基础结构或基础物件，则按该例外生成对应首帧。两种情况均继续自动执行首帧 QA、写入完整视频生成提示词并交付素材包；不新增审批 Gate，无需等待同批其他 item。
+阶段触发、逐 item 自动推进与完成状态按 [SKILL.md 的 Phase 3](../SKILL.md#phase-3生成素材包) 执行；本节负责首帧编辑、QA 和视频 Prompt 物化。
 
 ### 代表性默认空白首帧编辑 Prompt 模板
 
@@ -191,7 +159,7 @@ Do not: Add another retained structure, redesign the background, or change the r
 
 只有用户明确要求视频不要从完全空白开始时，才允许首帧预留一个基础结构或基础物件；不得由模型自行决定保留结构，不得新增其他例外。
 
-### 2. 首帧自动 QA
+### 首帧自动 QA
 
 首帧生成后自动检查：
 
@@ -209,6 +177,8 @@ Do not: Add another retained structure, redesign the background, or change the r
 - 除明确允许保留的内容及其自身自然物理投影之外，其余后续需要 assemble-from-empty 出现的组件及其 cast shadows 仍必须移除
 - 不得因为存在用户明确要求保留的基础结构而判定 QA 失败
 
+两种首帧均须检查：
+
 - 是否出现明显修补异常
 - 背景纸面状态是否明显漂移
 - 纸面质感是否仍与尾帧一致
@@ -220,11 +190,7 @@ Do not: Add another retained structure, redesign the background, or change the r
 
 将每个 item 的完整提示词写入 `<item>/video-prompt.txt`。它是给下游视频生成使用的正式交付物，不在 Skill 内部执行。
 
-生成 `video-prompt.txt` 前，Skill 在内部优先采用 `<project>/brief.md` 中与当前 item stable item identity 对应的 state 内 Gate 1 已确认的 assembly order，并由 `<item>/visual-spec.json` 为具体执行展开。只有 Gate 1 没有提供更具体的已确认顺序时，才在内部使用以下 fallback；随后将解析后的具体动作顺序直接写入 `video-prompt.txt`：
-
-```text
-基础结构 → 主体或关键卡片 → 连接件 → 动作 → 最终结果
-```
+生成 `video-prompt.txt` 前，按本文件 [Visual spec](#visual-spec) 定义的 assembly order → assembly_motion → motion_plan → resolved assembly sequence 物化顺序执行；fallback 仅在该处定义。默认空白与 retained-base 的起始状态须按当前 item 实际情况展开，Prompt 明确写出 Image 1 是空白纸面还是保留了用户指定的基础结构。
 
 ```text
 Clip: Paper-collage stop-motion assembly in one continuous, locked-off, approximately five-second vertical shot.
@@ -234,7 +200,7 @@ Assembly: [fully expand the current item's resolved assembly sequence, including
 Background: Preserve the exact confirmed visual treatment of Image 1 and Image 2: 背景使用暖中性色纸面作为统一底板，带轻微纸纤维与旧纸颗粒感。
 Visual mood: [fully expand the current item's confirmed emotion as a visual feeling without adding a new narrative element].
 Subject: [when the current item's subject.type is human or nonhuman, fully expand its resolved subject style and identity-and-continuity requirements and preserve them exactly from the confirmed last frame; when subject.type is none, omit this entire Subject line and do not introduce a face-bearing subject].
-Palette: The confirmed non-character palette for this item is [fully expand the selected Approved Palette name and its three exact colors]. Preserve the exact confirmed component-level color assignment. 每个非主体 component 必须保持其已确认的实体卡纸颜色。同一个 primary visual group 内只允许使用当前 palette 中的 1–2 种非主体组件颜色，其中第 2 种只能作为少量点缀，不得扩大面积、取代主色或重新分配颜色。不同 visual groups 可以重复使用同一颜色，不得产生 palette 之外的新颜色。
+Palette: The confirmed non-character palette for this item is [fully expand the selected Approved Palette name and its three exact colors]. Component colors: [fully expand every non-character component name and its confirmed exact color]. Preserve these exact assignments. 每个非主体 component 必须保持其已确认的实体卡纸颜色。同一个 primary visual group 内只允许使用当前 palette 中的 1–2 种非主体组件颜色，其中第 2 种只能作为少量点缀，不得扩大面积、取代主色或重新分配颜色。不同 visual groups 可以重复使用同一颜色，不得产生 palette 之外的新颜色。
 Material and shadow: 除具面部主体外，其它主要组件采用彩色卡纸浮雕图形语言。色块保持纯粹、明确，轮廓简洁，具有清晰裁切边缘、纸张厚度与实体卡纸质感。组件可以通过叠层、折叠、错位和高低关系形成浮雕式结构。所有前景元素必须保持方向统一、偏移明显、几乎没有柔化的强烈清晰硬投影。
 Layout lock: [fully expand the current item's confirmed background direction, placement / composition direction, and negative-space / breathing-zone direction]. Composition: 构图采用平面拼贴式空间组织，不受真实透视与真实尺度约束。整体必须保持“剪贴主体（如有）+ 卡纸场景”的分层拼贴，不得收敛成统一绘画空间或统一 3D 空间。保持确认尾帧的主次层级。所有前景组件，包括主体（如有）与非主体 visual groups，连同其形成的投影视觉占用区域，整体不得超过纸面约 60%；至少约 40% 的纸面保持可见。Do not redesign the visual style, palette, hierarchy or final composition.
 Do not: Use scene cuts, camera movement, zoom, morphing, fades, dissolves, opacity-based appearance, new objects, readable text, letters, numbers, subtitles, logos, watermark, UI or sound. Every appearing component must use a specific slide-in, snap-into-place, physical placement, connection or mechanical stop-motion action; never use opacity to make an element appear.
@@ -242,18 +208,9 @@ Do not: Use scene cuts, camera movement, zoom, morphing, fades, dissolves, opaci
 
 每条 prompt 都必须明确：默认情况下 Image 1 是对应空白首帧；用户明确要求保留基础结构时，Image 1 是对应的合法起始首帧。Image 2 是已确认定稿尾帧；不能只写“画面逐渐组装”。最终构图必须贴近 Image 2，不允许下游视频生成自由重新构图、改造主体关系、增加新物件或重新设计最终状态。
 
-### 4. 保存与交付素材包
+### 保存与交付素材包
 
-每个完成 item 的素材包固定为：
-
-```text
-<item>/
-├── first-frame.png
-├── last-frame.png
-└── video-prompt.txt
-```
-
-只有 confirmed candidate 已成为 `last-frame.png`、`first-frame.png` QA 通过且 `video-prompt.txt` 已完成后，才将当前 item 的 `phase3_status` 写为 `completed`。同一 confirmed candidate 的三项文件已齐全且 `phase3_status = completed` 时，重复确认不得重跑 Phase 3。已经通过 Gate 2 并完成素材包的 item，不因其他 item 后续修改而重新生成；只有用户明确要求修改或重新生成该 item 时，才重新进入对应阶段。
+按 [SKILL.md 的 Phase 3 与默认交付](../SKILL.md#phase-3生成素材包) 保存三项正式素材并写入完成状态；重复确认的幂等规则与跨 item 隔离同样以该入口为准。
 
 ### 常见问题
 

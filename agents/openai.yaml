@@ -1,6 +1,6 @@
 interface:
   display_name: "EIAN Collage B-roll"
   short_description: "输入路由→隐喻确认→尾帧确认→首尾帧与视频提示词素材包"
-  default_prompt: "Use $eian-collage-broll to 把口播做成高级 halftone paper-collage B-roll 素材包。先按 SKILL.md 路由：Type A 是自然约 5 秒、语义完整且只有一个主要视觉命题的单段，直接进入 Gate 1；Type B 必须尊重用户可识别的原始分段并逐段判断：符合独立制作单元条件的原段直接进入 Gate 1；仅对不符合条件的原段按 Candidate Extraction 规则进行分段复核，并由用户决定该原段最终进入 Gate 1 的原文单元；只有完整定稿 Type C 执行 Candidate Extraction，展示连续原文候选并等待用户选择，此选择不是视觉审批 Gate。Gate 1 向用户展示核心意思、一句话视觉命题与当前 item 的页面组件（包括 primary visual groups 及其 components），内部保存完整视觉方案并等待确认；Gate 2 仅生成、QA 和展示带编号 candidate，只有用户明确确认的 candidate 才成为 last-frame.png。确认后该 item 自动进入 Phase 3：基于确认尾帧编辑首帧、执行 QA、写入视频提示词并交付 first-frame.png、last-frame.png、video-prompt.txt。不得调用视频生成模型；仅在用户明确要求时保留基础结构或基础物件，其自身方向统一、偏移明显、几乎没有柔化的强烈清晰硬投影可保留。"
+  default_prompt: "Use $eian-collage-broll 按 SKILL.md 的输入路由、Gate 1 / Gate 2 确认与逐 item 推进规则，把口播制作为 first-frame.png、last-frame.png 和 video-prompt.txt 素材包，并按正式规则完成 Project Cleanup。"
 policy:
   allow_implicit_invocation: true

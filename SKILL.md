@@ -41,17 +41,11 @@ Gate 1 不依赖图片生成能力。Gate 2 需要可用的图片生成能力；
 
 进入 Gate 1 前，先按照 [broll-candidate-extraction.md](references/broll-candidate-extraction.md) 判断输入类型及每个待制作单元是否已经适合作为独立 B-roll 制作单元。
 
-- **Type A：单段约 5 秒口播**：符合独立制作单元条件时直接进入 Gate 1；如内部实际包含多个能够独立成立的主要语义或视觉命题，则按该文件执行分段复核，并由用户决定保留原段、全部建议分段或部分建议分段进入 Gate 1。
-- **Type B：用户已经拆好的多段口播**：先尊重用户原始分段并逐段判断；符合条件的原段直接进入 Gate 1，只对不符合条件的原段按该文件执行分段复核，并由用户决定该原段最终如何进入 Gate 1。
-- **Type C：完整定稿口播**：按照 [broll-candidate-extraction.md](references/broll-candidate-extraction.md) 执行 B-roll Candidate Extraction，只展示最终候选原文并等待用户选择。只有用户选中的候选进入 Gate 1。
-
-B-roll Candidate Extraction 只负责候选选择和原文边界，不负责正式视觉隐喻设计。
-
-Candidate Selection 或分段确认只决定哪些原文单元进入制作，不是视觉设计 approval gate，也不能替代 Gate 1 的视觉确认。
+该职责源统一定义 Type A / Type B / Type C、分段复核与 Candidate Selection。只有它确定的制作单元进入 Gate 1；候选或分段选择不能替代视觉确认。
 
 ### Gate 1：隐喻确认
 
-收到文稿后，先提取视觉隐喻，并确定核心意思、情绪、一句话视觉命题、当前 item 的 visual groups 与各组主次 / visual role、placement / composition direction（包括主要 breathing zone）、negative space / breathing zone direction、background direction 与主色 / 辅助色方向，以及预期组装顺序。不生成图片。
+收到文稿后，先提取视觉隐喻，并仅根据当前 item 的文案和视觉方案独立确定 `subject.type`，再确定核心意思、情绪、一句话视觉命题、当前 item 的 visual groups 与各组主次 / visual role、placement / composition direction（包括主要 breathing zone）、negative space / breathing zone direction、background direction 与主色 / 辅助色方向，以及预期组装顺序。当前默认 persistent reference 或任何 reference 的存在不得影响是否设计人类或非人主体；不生成图片。
 
 向用户交付每条的：
 
@@ -96,11 +90,13 @@ Gate 2 只负责尾帧阶段：生成尾帧所需 visual spec 与 imagegen promp
 
 收到参考照片后，先检查是否能够清晰、完整识别面部区域及主要面部特征。若面部缺失、严重遮挡、过小、过度模糊或无法可靠识别，不将该照片设为正式主体参考图，并建议用户更换照片。
 
-通过检查的用户原始上传 reference 保持为用户原始文件，不属于 Skill-managed 文件且绝不由 Skill 删除。仅将其复制为本 Skill 的持久主体参考图：managed copy 必须保存于 `<project>/managed-references/`，位于所有 `<item>/` 目录之外，并在 `<project>/brief.md` 中记录当前 item 对该实际 managed reference 的 association；它持续用于后续需要对应主体身份参考的生成，直到用户明确要求删除或更换。
+通过检查的用户原始上传 reference 保持为用户原始文件，不属于 Skill-managed 文件且绝不由 Skill 删除。首次通过检查的有效 human 或 nonhuman reference 必须复制为本 Skill 的当前默认 persistent reference：managed copy 保存于 `~/eian-collage-broll-projects/managed-references/`，位于任何 `<project>/` 与 `<item>/` 目录之外；其实际 source 与 `subject.type` 作为当前默认 persistent state 持续保留，供该批完成后的下一次 Skill 调用继续使用，不能只写入单个 `<project>` 或 item association。
 
-用户要求更换时，必须先要求用户上传新的参考照片；新照片通过面部检查后，以新的 Skill-managed copy 替换当前 item 的 association，并保持当前 item 的 `reference_subject_provided = true`，只删除旧的 Skill-managed copy 及其 association，不得继续引用、恢复或复用旧 managed copy；绝不删除用户原始上传 reference。
+每个 item 的 Gate 1 先按本节前述规则独立确定 `subject.type`，再处理 reference。`subject.type = none` 时，必须将 `reference_subject_provided = false`、reference source / association 置空，不传 reference，且不得因已有默认 reference 自行新增具面部主体。`subject.type = human` 或 `nonhuman` 时，只有当前默认 persistent reference 的类型匹配且用户未明确要求不用、replace 或 delete，才自动为当前 item 建立到该实际 managed reference 的 association，并写入 `reference_subject_provided = true` 与 `reference_subject_source`；类型不匹配或用户明确不用时，二者必须保持 `false` / 为空。Gate 2 只能读取当前 item 已建立的 association，不得读取默认 reference 或其他 item state 进行继承。
 
-用户明确要求删除主体参考图时，只删除当前 Skill-managed copy 及其持久 association，并将当前 item 的 `reference_subject_provided = false`、当前 reference source / association 置空；删除后，后续生成不得继续使用该 copy，用户原始上传 reference 仍绝对不得删除。
+用户要求 replace 时，必须先要求用户上传新的参考照片；新照片通过面部检查后，才将新的 Skill-managed copy 设为当前默认 persistent reference。当前 item 仅在其 `subject.type` 与新 reference 匹配且用户未要求不用时更新到新 association；其他 item 已建立的 association 不得改变。旧 managed copy 只有不再被任何 item association 使用时才删除；绝不删除用户原始上传 reference。新照片未通过检查前，当前默认 reference 与全部既有 association 均保持不变。
+
+用户明确要求 delete 当前主体参考图时，清除当前默认 persistent reference；当前 item 的 association 同时清除并将 `reference_subject_provided = false`、当前 reference source 置空，其他 item 已建立的 association 不得改变。只有已不被任何 item association 使用的 managed copy 才删除；删除后新的 Gate 1 不得继续自动使用该 copy，用户原始上传 reference 仍绝对不得删除。
 
 主体参考图属于长期持久化资产，不因单个项目结束或 Project Cleanup 被自动删除。
 
@@ -117,7 +113,6 @@ Gate 2 只负责尾帧阶段：生成尾帧所需 visual spec 与 imagegen promp
 ```text
 <project>/
 ├── brief.md
-├── managed-references/
 ├── imagegen-prompts.md
 ├── gate2-qa.md
 ├── last-frame-contact-sheet.jpg
@@ -137,13 +132,13 @@ Gate 2 只负责尾帧阶段：生成尾帧所需 visual spec 与 imagegen promp
 └── ...
 ```
 
-`<project>/brief.md` 是唯一持久状态文件，不允许在 item 目录另建 `brief.md`。每个生产 item 必须具有稳定的 item identity，并与对应 `<item>/` 目录一一绑定；每个 item state 在现有 Gate 1 confirmed fields 基础上保存 `item_id`、`stage`、`gate1_revision`、`latest_candidate_version`、`presented_candidate_version`、`confirmed_candidate_version`、`candidate_gate1_revision` 与 `phase3_status`，以及该 item 的 source script、core meaning、emotion、confirmed visual proposition / visual metaphor、confirmed visual groups 与各组当前 item 的主次 / visual role、confirmed placement / composition direction（包括主要 breathing zone）、confirmed negative-space direction、confirmed background direction、confirmed primary / secondary color direction、confirmed Approved Palette、confirmed component-level color assignment、confirmed assembly order、`subject.type`、`reference_subject_provided` 与当前 item 使用的实际 managed reference source / association（如存在）。首次 Gate 1 确认时 `gate1_revision = 1`；已确认方案发生实际修改并再次确认时 revision 加 1；重复确认、恢复上下文或重新展示不增加 revision。Gate 1 revision 改变后，旧 revision 生成的 candidate 只能保留用于对比，不得成为 `last-frame.png`。如果当前 item 已存在基于旧 Gate 1 revision 完成的 confirmed candidate 或 Phase 3 素材包，则 Gate 1 revision 改变后，这些旧 downstream results 不再视为当前 revision 的有效 confirmed / completed state；旧 `confirmed_candidate_version` 不再代表当前 revision 的有效 confirmed candidate；当前 item 不得继续保持 `phase3_status = completed`；只有新 revision 重新完成 Gate 2 和 Phase 3 后才能再次写为 `completed`。Gate 2 恢复或批量生产时，只能读取 `<project>/brief.md` 中与当前 stable item identity 对应的 state，不得跨 item 读取或复用其它 item 状态。
+`<project>/brief.md` 是唯一项目持久状态文件，不允许在 item 目录另建 `brief.md`。每个生产 item 必须具有稳定的 item identity，并与对应 `<item>/` 目录一一绑定；每个 item state 在现有 Gate 1 confirmed fields 基础上保存 `item_id`、`stage`、`gate1_revision`、`latest_candidate_version`、`presented_candidate_version`、`confirmed_candidate_version`、`candidate_gate1_revision` 与 `phase3_status`，以及该 item 的 source script、core meaning、emotion、confirmed visual proposition / visual metaphor、confirmed visual groups 与各组当前 item 的主次 / visual role、confirmed placement / composition direction（包括主要 breathing zone）、confirmed negative-space direction、confirmed background direction、confirmed primary / secondary color direction、confirmed Approved Palette、confirmed component-level color assignment、confirmed assembly order、`subject.type`、`reference_subject_provided` 与当前 item 使用的实际 managed reference source / association（如存在）。当前默认 persistent reference 是 Skill 级状态，不属于任何 `<project>/brief.md`；它只可在 Gate 1、且只在已独立确定 `subject.type` 后用于建立当前 item association。首次 Gate 1 确认时 `gate1_revision = 1`；已确认方案发生实际修改并再次确认时 revision 加 1；重复确认、恢复上下文或重新展示不增加 revision。Gate 1 revision 改变后，旧 revision 生成的 candidate 只能保留用于对比，不得成为 `last-frame.png`。如果当前 item 已存在基于旧 Gate 1 revision 完成的 confirmed candidate 或 Phase 3 素材包，则 Gate 1 revision 改变后，这些旧 downstream results 不再视为当前 revision 的有效 confirmed / completed state；旧 `confirmed_candidate_version` 不再代表当前 revision 的有效 confirmed candidate；当前 item 不得继续保持 `phase3_status = completed`；只有新 revision 重新完成 Gate 2 和 Phase 3 后才能再次写为 `completed`。Gate 2 恢复或批量生产时，只能读取 `<project>/brief.md` 中与当前 stable item identity 对应的 state，不得跨 item 读取或复用其它 item 状态，也不得回读当前默认 persistent reference。
 
 `last-frame.png` 必须就是 Gate 2 已确认定稿尾帧，不额外制造另一套视频使用尾帧。`first-frame.png` 必须由该定稿尾帧编辑派生；`video-prompt.txt` 是完整视频生成提示词。
 
 ## Phase 1：设计视觉隐喻
 
-Gate 1 的视觉方案必须遵守 [references/visual-language.md](references/visual-language.md) 定义的图片视觉语言。Gate 1 确认后，将 confirmed visual groups 与各组当前 item 的主次 / visual role、placement / composition direction（包括主要 breathing zone）、negative-space direction、背景方向、主色 / 辅助色方向、Approved Palette、component-level color assignment、`subject.type`、`reference_subject_provided`、当前 item 使用的实际 managed reference source / association（如存在）与 assembly order 写入 `<project>/brief.md` 中该 item 的 stable item identity state；同时按该 state 的实际阶段更新 runtime fields。该 assembly order 是后续 visual spec 与 `video-prompt.txt` 必须继承的已确认叙事顺序。Gate 1 `assembly order` 是用户确认的 item-level narrative assembly order；`primary_visual_groups[].assembly_motion` 是单个 visual group 内 components 的具体进入、连接或放置动作；`motion_plan` 将 confirmed Gate 1 assembly order 与 group-level assembly motion 组合为 item-level production plan；`resolved assembly sequence` 是最终完全物化后直接写入 `video-prompt.txt` 的具体动作序列。后一级必须继承前一级，不得重新设计已确认的 assembly order。Gate 2 必须继承这些 confirmed composition 结果，不得重新设计已确认的主次关系、填掉留白或主动增加 groups。
+Gate 1 的视觉方案必须遵守 [references/visual-language.md](references/visual-language.md) 定义的图片视觉语言。Gate 1 确认后，将 confirmed visual groups 与各组当前 item 的主次 / visual role、placement / composition direction（包括主要 breathing zone）、negative-space direction、背景方向、主色 / 辅助色方向、Approved Palette、component-level color assignment、`subject.type`、`reference_subject_provided`、当前 item 使用的实际 managed reference source / association（如存在）与 assembly order 写入 `<project>/brief.md` 中该 item 的 stable item identity state；同时按该 state 的实际阶段更新 runtime fields。该 assembly order 是后续 visual spec 与 `video-prompt.txt` 必须继承的已确认叙事顺序。从 assembly order 到 group-level motion、production plan 和视频动作序列的物化关系见 [references/image-production.md](references/image-production.md#visual-spec)。Gate 2 必须继承这些 confirmed composition 结果，不得重新设计已确认的主次关系、填掉留白或主动增加 groups。
 
 ## Phase 2：生成并确认尾帧
 
